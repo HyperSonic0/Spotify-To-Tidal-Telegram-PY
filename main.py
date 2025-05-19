@@ -3,12 +3,13 @@ import requests
 import re
 import uuid
 
+from googlesearch import search
 from telegram import Update, InlineQueryResultArticle, InputTextMessageContent
 from telegram.ext import ApplicationBuilder, ContextTypes, InlineQueryHandler
 
-client_id = "wpierdol_tu_client_id"
-client_secret = "wpierdol_tu_client_secret"
-telegram_token = "wpierdol_tu_telegram_token"
+# client_id = "wpierdol_tu_client_id"
+# client_secret = "wpierdol_tu_client_secret"
+# telegram_token = "wpierdol_tu_telegram_token"
 
 def get_access_token():
     auth = f"{client_id}:{client_secret}"
@@ -43,13 +44,14 @@ async def inline_query_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     access_token = get_access_token()
     artist,name = get_track_name(access_token, track_id)
     track_info = f"{name} - {artist}"
+    url = next(search(f"site:tidal.com {track_info}"), None)
 
     if track_id and access_token and track_info:
         result = InlineQueryResultArticle(
             id=str(uuid.uuid4()),
             title="Get Tidal Link",
             input_message_content=InputTextMessageContent(
-                f"🎵 Track name: {track_info}\n🔗 Tidal Link: Work in Progress"
+                f"🎵 Track name: {track_info}\n🔗 Tidal Link: {url}"
             )
         )
 
