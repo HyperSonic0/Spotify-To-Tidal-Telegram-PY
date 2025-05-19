@@ -2,7 +2,6 @@ import base64
 import requests
 client_id = "wpierdol_tu_client_id"
 client_secret = "wpierdol_tu_client_secret"
-
 def get_access_token():
     auth = f"{client_id}:{client_secret}"
     auth_bytes = auth.encode("utf-8")
