@@ -1,9 +1,14 @@
 import base64
 import requests
 import re
+import uuid
+
+from telegram import Update, InlineQueryResultArticle, InputTextMessageContent
+from telegram.ext import ApplicationBuilder, ContextTypes, InlineQueryHandler
 
 client_id = "wpierdol_tu_client_id"
 client_secret = "wpierdol_tu_client_secret"
+telegram_token = "wpierdol_tu_telegram_token"
 
 def get_access_token():
     auth = f"{client_id}:{client_secret}"
@@ -24,8 +29,7 @@ def get_track_name(access_token, track_id):
     response = requests.get(url, headers=headers)
     data = response.json()
 
-    print("Tytuł:", data["name"])
-    print("Wykonawca:", data["artists"][0]["name"])
+    return data["name"], data["artists"][0]["name"]
 
 def get_track_id(url):
     match = re.search(r"open\.spotify\.com/track/([a-zA-Z0-9]+)", url)
@@ -33,15 +37,25 @@ def get_track_id(url):
         return match.group(1)
     return None
 
-if __name__ == "__main__":
+async def inline_query_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.inline_query.query.strip()
+    track_id = get_track_id(query)
     access_token = get_access_token()
-    track_id = get_track_id("https://open.spotify.com/track/1uBAuWOJkBnGCBBr3aiczY?si=70d5b45dd30c4e44")
-    if track_id == None:
-        print("Invalid track link.")
-    else:
-        print("Track ID:", track_id)
-    get_track_name(access_token, "track_id")
+    artist,name = get_track_name(access_token, track_id)
+    track_info = f"{name} - {artist}"
 
+    if track_id and access_token and track_info:
+        result = InlineQueryResultArticle(
+            id=str(uuid.uuid4()),
+            title="Get Tidal Link",
+            input_message_content=InputTextMessageContent(
+                f"🎵 Track name: {track_info}\n🔗 Tidal Link: Work in Progress"
+            )
+        )
 
+    await update.inline_query.answer([result], cache_time=1)
 
-    
+if __name__ == "__main__":
+    app = ApplicationBuilder().token(telegram_token).build()
+    app.add_handler(InlineQueryHandler(inline_query_handler))
+    app.run_polling()
