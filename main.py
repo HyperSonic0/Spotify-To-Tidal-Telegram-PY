@@ -44,7 +44,7 @@ async def inline_query_handler(update: Update, context: ContextTypes.DEFAULT_TYP
     access_token = get_access_token()
     artist,name = get_track_name(access_token, track_id)
     track_info = f"{name} - {artist}"
-    url = next(search(f"site:tidal.com {track_info}"), None)
+    url = next(search(f"site:tidal.com {track_info}"), None) or "❌ No Tidal link found - Try to search manually"
 
     if track_id and access_token and track_info:
         result = InlineQueryResultArticle(
