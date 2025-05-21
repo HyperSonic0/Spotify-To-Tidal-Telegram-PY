@@ -7,9 +7,9 @@ from googlesearch import search
 from telegram import Update, InlineQueryResultArticle, InputTextMessageContent
 from telegram.ext import ApplicationBuilder, ContextTypes, InlineQueryHandler
 
-client_id = "wpierdol_tu_client_id"
-client_secret = "wpierdol_tu_client_secret"
-telegram_token = "wpierdol_tu_telegram_token"
+client_id = "PUT_SPOTIFY_CLIENT_ID_HERE"
+client_secret = "PUT_SPOTIFY_CLIENT_SECRET_HERE"
+telegram_token = "PUT_TELEGRAM_BOT_TOKEN_HERE"
 
 def get_access_token():
     auth = f"{client_id}:{client_secret}"
